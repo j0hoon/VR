@@ -1,5 +1,8 @@
-from pymongo import MongoClient
+"""
+몽고디비에서 CSS를 이용해서 VR알고리즘에 학습할 데이터를 선정해주는 코드
+"""
 
+from pymongo import MongoClient
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -8,7 +11,7 @@ import datetime
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
-
+import re
 
 class Recognition():
     def __init__(self):
@@ -164,7 +167,14 @@ def check_recognition(recognition_file, temp_num, RECOGNITION):
 def get_recognition_file(directory):
     if "xlsx" in directory:
         directory = directory.replace("xlsx","csv")
-    
+    if "D:\\Shares" in directory:
+        if "D:\\Shares\\Shares" in directory:
+            # Shares 두번 있는 경우
+            directory = directory.replace("D:\\Shares\\Shares","\\\\192.168.75.251\\Shares")
+        else:
+            # Shares 만 있는 경우
+            directory = directory.replace("D:\\Shares","\\\\192.168.75.251\\Shares")
+
     recog_file = pd.read_csv(directory)
     
     return recog_file
@@ -195,6 +205,7 @@ def main():
     total_result = pd.DataFrame(columns =["FVL","FVI","FVR","AVL","AVR","RVL","RVI","RVR","directory"])
     
     db = connect_mongoDB()
+    
     
     data_list = ["RG3_030223", "RG3_030323", "RG3_030423"]
     
